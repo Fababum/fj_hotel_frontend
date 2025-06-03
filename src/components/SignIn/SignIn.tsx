@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import './SignIn.css'
 
-// Placeholder for database check
 const fakeUser = {
-  email: 'test@mail.com',
-  password: '123456'
+  email: 'demo@fjhotel.com',
+  password: 'fjhotel2025'
 }
 
 export default function SignIn() {
@@ -16,7 +15,6 @@ export default function SignIn() {
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault()
-    // Placeholder "database" check
     if (email === fakeUser.email && password === fakeUser.password) {
       setError('')
       navigate('/')
