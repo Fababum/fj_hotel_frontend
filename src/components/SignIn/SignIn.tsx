@@ -2,24 +2,31 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import './SignIn.css'
 
-const fakeUser = {
-  email: 'demo@fjhotel.com',
-  password: 'fjhotel2025'
-}
-
 export default function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email === fakeUser.email && password === fakeUser.password) {
-      setError('')
-      navigate('/')
-    } else {
-      setError('Wrong email or password')
+    setError('')
+
+    try {
+      // Beispiel-API-Aufruf an dein Backend
+      const res = await fetch('http://localhost:3001/api/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        navigate('/')
+      } else {
+        setError(data.message || 'Wrong email or password')
+      }
+    } catch (err) {
+      setError('Server error')
     }
   }
 

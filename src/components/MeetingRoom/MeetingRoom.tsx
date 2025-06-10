@@ -17,22 +17,39 @@ export default function MeetingRoom() {
     roomType: 'Standard',
     persons: 1
   })
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleContinue = (e: React.FormEvent) => {
+  const handleContinue = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert('Meeting room booking submitted!')
-    navigate('/')
+    setError('')
+    try {
+      const res = await fetch('http://localhost:3001/api/meetingroom-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        alert('Meeting room booking submitted!')
+        navigate('/')
+      } else {
+        setError(data.message || 'Booking failed')
+      }
+    } catch (err) {
+      setError('Server error')
+    }
   }
 
   return (
     <div className="booking-container">
       <form className="booking-form" onSubmit={handleContinue}>
         <h2>Meeting Room Booking</h2>
+        {error && <div className="error-message">{error}</div>}
         <div className="booking-row">
           <input
             type="text"

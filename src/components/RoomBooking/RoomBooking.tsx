@@ -17,22 +17,37 @@ export default function RoomBooking() {
     roomType: 'Standard',
     persons: 1
   })
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleContinue = (e: React.FormEvent) => {
+  const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Placeholder: handle booking logic here
-    alert('Booking submitted!')
-    navigate('/')
+    setError('')
+    try {
+      const res = await fetch('http://localhost:3001/api/roombooking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        alert('Booking submitted!')
+        navigate('/')
+      } else {
+        setError(data.message || 'Booking failed')
+      }
+    } catch (err) {
+      setError('Server error')
+    }
   }
 
   return (
     <div className="booking-container">
-      <form className="booking-form" onSubmit={handleContinue}>
+      <form className="booking-form" onSubmit={handleBooking}>
         <h2>Room Booking</h2>
         <div className="booking-row">
           <input
@@ -140,6 +155,7 @@ export default function RoomBooking() {
           onChange={handleChange}
           required
         />
+        {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
         <button className="booking-btn" type="submit">Continue</button>
       </form>
       <button className="back-btn" onClick={() => navigate('/')}>Back</button>

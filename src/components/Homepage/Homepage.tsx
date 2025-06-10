@@ -27,7 +27,7 @@ export default function Homepage() {
   // Erweiterung: Zusatzinfos, Features, Call-to-Action
   return (
     <div className="homepage-container">
-      <h1>Homepage</h1>
+      <h1>FJ Hotel</h1>
       <p className="homepage-intro">
         Willkommen im FJ Hotel! Entdecken Sie Komfort, Stil und erstklassigen Service im Herzen der Stadt.
       </p>

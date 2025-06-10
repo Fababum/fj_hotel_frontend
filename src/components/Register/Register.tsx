@@ -15,21 +15,36 @@ export default function Register() {
     password: '',
     passwordConfirm: ''
   })
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Placeholder: handle registration logic here
+    setError('')
     if (form.password !== form.passwordConfirm) {
-      alert('Passwords do not match!')
+      setError('Passwords do not match!')
       return
     }
-    alert('Successfully registered!')
-    navigate('/')
+    try {
+      const res = await fetch('http://localhost:3001/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        alert('Successfully registered!')
+        navigate('/')
+      } else {
+        setError(data.message || 'Registration failed')
+      }
+    } catch (err) {
+      setError('Server error')
+    }
   }
 
   return (
@@ -120,6 +135,7 @@ export default function Register() {
           onChange={handleChange}
           required
         />
+        {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
         <button className="register-btn" type="submit">Register</button>
       </form>
       <button className="back-btn" onClick={() => navigate('/sign-up')}>Back</button>
